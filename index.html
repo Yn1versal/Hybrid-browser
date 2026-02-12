@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Hybrid GX Browser v12.0</title>
+    <title>Hybrid GX Browser v13.0</title>
     <style>
         :root { --accent: #FF8C00; --bg: #0b0b0b; --sidebar-bg: #050505; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,7 +21,7 @@
 
         .container { display: flex; flex: 1; overflow: hidden; }
 
-        /* Бокова панель (YOUTUBE ПОВЕРНУТО) */
+        /* Бокова панель (ФІКСОВАНИЙ ЮТУБ ТУТ) */
         .sidebar { width: 65px; background: var(--sidebar-bg); display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #222; }
         .side-icon { margin-bottom: 25px; cursor: pointer; transition: 0.2s; position: relative; }
         .side-icon img { width: 34px; height: 34px; }
@@ -34,21 +34,21 @@
         iframe.active { display: block; }
 
         /* ЦЕНТРАЛЬНИЙ ЕКРАН */
-        #home { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        #home { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding-bottom: 50px; }
         #home.hidden { display: none; }
-        .logo { font-size: 55px; font-weight: bold; margin-bottom: 30px; text-shadow: 0 0 15px rgba(255,140,0,0.3); }
+        .logo { font-size: 55px; font-weight: bold; margin-bottom: 30px; }
         .orange { color: var(--accent); }
 
         /* Центральний пошук (ЦПС) */
-        .main-search { width: 550px; padding: 15px 25px; border-radius: 8px; border: 2px solid #222; background: #111; color: white; font-size: 18px; outline: none; margin-bottom: 40px; transition: 0.3s; }
-        .main-search:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(255, 140, 0, 0.1); }
+        .main-search { width: 550px; padding: 15px 25px; border-radius: 8px; border: 2px solid #222; background: #111; color: white; font-size: 18px; outline: none; margin-bottom: 40px; }
+        .main-search:focus { border-color: var(--accent); }
 
-        /* Рекомендації (як в Opera GX) */
+        /* Рекомендації (Плитки) */
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 600px; }
         .tile { background: #161616; padding: 18px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid #222; transition: 0.2s; }
-        .tile:hover { border-color: var(--accent); background: #202020; transform: translateY(-5px); }
+        .tile:hover { border-color: var(--accent); transform: translateY(-5px); }
         .tile img { width: 40px; height: 40px; margin-bottom: 10px; }
-        .tile span { display: block; font-size: 13px; font-weight: 500; color: #ddd; }
+        .tile span { display: block; font-size: 13px; color: #ddd; }
     </style>
 </head>
 <body>
@@ -66,16 +66,23 @@
 
     <div class="container">
         <div class="sidebar">
-            <div class="side-icon" onclick="openTab('https://web.telegram.org', 'Telegram')"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"></div>
-            <div class="side-icon" onclick="openTab('https://discord.com/app', 'Discord')"><img src="https://www.svgrepo.com/show/353655/discord-icon.svg"><div class="dot"></div></div>
-            <div class="side-icon" onclick="openTab('https://www.youtube.com/embed', 'YouTube')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"></div>
+            <div class="side-icon" onclick="openTab('https://www.youtube.com/embed', 'YouTube')">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube">
+            </div>
+            <div class="side-icon" onclick="openTab('https://discord.com/app', 'Discord')">
+                <img src="https://www.svgrepo.com/show/353655/discord-icon.svg" alt="Discord">
+                <div class="dot"></div>
+            </div>
+            <div class="side-icon" onclick="openTab('https://web.telegram.org', 'Telegram')">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram">
+            </div>
         </div>
 
         <div id="viewport">
             <div id="home">
                 <div class="logo"><span class="orange">HYBRID</span> GX</div>
                 
-                <input type="text" class="main-search" placeholder="Шукати в інтернеті..." onkeypress="handleEnter(event)">
+                <input type="text" class="main-search" id="main-search" placeholder="Шукати в інтернеті..." onkeypress="handleEnter(event)">
 
                 <div class="grid">
                     <div class="tile" onclick="openTab('https://www.roblox.com', 'Roblox')">
