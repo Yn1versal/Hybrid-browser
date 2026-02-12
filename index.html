@@ -2,165 +2,166 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Hybrid Browser v9.0</title>
+    <title>Hybrid Browser | Opera GX Style</title>
     <style>
+        :root { --gx-orange: #FF8C00; --gx-dark: #0f0f0f; --gx-gray: #1a1a1a; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #121212; color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background: var(--gx-dark); color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* Вкладки зверху */
-        #tabs { background: #1a1a1a; display: flex; padding: 10px 10px 0; gap: 5px; border-bottom: 2px solid #FF8C00; min-height: 45px; }
-        .tab { background: #333; padding: 8px 15px; border-radius: 8px 8px 0 0; cursor: pointer; min-width: 140px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #444; border-bottom: none; color: #ccc; }
-        .tab.active { background: #FF8C00; color: black; font-weight: bold; border-color: #FF8C00; }
-        .close-btn { margin-left: 10px; font-size: 16px; opacity: 0.5; }
-        .close-btn:hover { opacity: 1; color: red; }
+        #tabs { background: #050505; display: flex; padding: 8px 10px 0; gap: 4px; border-bottom: 1px solid var(--gx-orange); height: 40px; }
+        .tab { background: #151515; padding: 6px 15px; border-radius: 5px 5px 0 0; cursor: pointer; min-width: 130px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; color: #888; border: 1px solid #222; border-bottom: none; }
+        .tab.active { background: var(--gx-orange); color: black; font-weight: bold; border-color: var(--gx-orange); }
+        .close-tab { margin-left: 10px; font-size: 14px; cursor: pointer; }
 
         /* Навігація */
-        .nav { background: #222; padding: 10px; display: flex; gap: 15px; align-items: center; border-bottom: 1px solid #333; }
-        .btn { cursor: pointer; color: #FF8C00; font-weight: bold; font-size: 20px; user-select: none; transition: 0.2s; }
-        .btn:hover { transform: scale(1.2); color: white; }
-        #url-input { flex: 1; background: #121212; border: 1px solid #444; color: white; padding: 8px 20px; border-radius: 20px; outline: none; font-size: 14px; }
+        .nav-bar { background: var(--gx-gray); padding: 8px 15px; display: flex; gap: 15px; align-items: center; border-bottom: 1px solid #333; }
+        .nav-btn { cursor: pointer; color: var(--gx-orange); font-size: 18px; user-select: none; }
+        #addr-bar { flex: 1; background: #000; border: 1px solid #333; color: #ccc; padding: 6px 15px; border-radius: 4px; font-size: 13px; outline: none; }
 
-        /* Основний контейнер */
-        .main-wrapper { display: flex; flex: 1; overflow: hidden; }
-        
+        .main-container { display: flex; flex: 1; overflow: hidden; }
+
         /* Бокова панель */
-        .sidebar { width: 70px; background: #181818; display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #333; z-index: 10; }
-        .side-btn { margin-bottom: 25px; cursor: pointer; position: relative; transition: 0.3s; }
-        .side-btn img { width: 38px; height: 38px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .side-btn:hover { transform: translateY(-3px); }
-        .dot { position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background: #ff4444; border-radius: 50%; border: 2px solid #181818; }
+        .sidebar { width: 60px; background: #0a0a0a; display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #222; }
+        .side-icon { margin-bottom: 25px; cursor: pointer; transition: 0.2s; position: relative; }
+        .side-icon img { width: 32px; height: 32px; filter: grayscale(0.5); }
+        .side-icon:hover img { filter: grayscale(0); transform: scale(1.1); }
+        .dot { position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background: red; border-radius: 50%; border: 2px solid #0a0a0a; }
 
-        /* Контентна зона */
-        #content-area { flex: 1; position: relative; background: #121212; }
+        /* Контент */
+        #viewport { flex: 1; position: relative; background: var(--gx-dark); }
         iframe { width: 100%; height: 100%; border: none; display: none; background: white; }
         iframe.active { display: block; }
-        
-        /* Домашній екран */
-        #home-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: radial-gradient(circle, #1e1e1e 0%, #121212 100%); }
-        #home-screen.hidden { display: none; }
-        .logo { font-size: 60px; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 140, 0, 0.3); }
-        .orange { color: #FF8C00; }
-        .main-search { width: 550px; padding: 15px 30px; border-radius: 35px; border: 1px solid #444; background: #222; color: white; font-size: 18px; outline: none; margin-top: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.3s; }
-        .main-search:focus { border-color: #FF8C00; width: 600px; }
+
+        /* ГОЛОВНИЙ ЕКРАН (OPERA GX STYLE) */
+        #home { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        #home.hidden { display: none; }
+        .logo { font-size: 50px; font-weight: bold; letter-spacing: 2px; margin-bottom: 30px; }
+        .orange { color: var(--gx-orange); }
+
+        /* Центральний пошук */
+        .search-container { position: relative; margin-bottom: 40px; }
+        .main-input { width: 500px; padding: 15px 25px; border-radius: 5px; border: 2px solid #333; background: #151515; color: white; font-size: 16px; outline: none; transition: 0.3s; }
+        .main-input:focus { border-color: var(--gx-orange); box-shadow: 0 0 15px rgba(255, 140, 0, 0.2); }
+
+        /* Швидкі вкладки (Speed Dial) як в Опері */
+        .speed-dial { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 500px; }
+        .dial-item { background: #1a1a1a; padding: 15px; border-radius: 8px; text-align: center; cursor: pointer; border: 1px solid #333; transition: 0.2s; }
+        .dial-item:hover { background: #252525; border-color: var(--gx-orange); transform: translateY(-5px); }
+        .dial-item img { width: 40px; height: 40px; margin-bottom: 8px; }
+        .dial-item span { display: block; font-size: 12px; color: #bbb; }
     </style>
 </head>
 <body>
 
     <div id="tabs">
-        <div class="tab active" id="tab-home" onclick="showView('home-screen')">
-            <span>🏠 Головна</span>
-        </div>
+        <div class="tab active" id="t-home" onclick="showView('home')">🏠 Головна</div>
     </div>
 
-    <div class="nav">
-        <div class="btn" onclick="goBack()">⟵</div>
-        <div class="btn" onclick="goForward()">⟶</div>
-        <div class="btn" onclick="refreshPage()">⟳</div>
-        <input type="text" id="url-input" placeholder="Пошук або URL..." onkeypress="handleEnter(event)">
+    <div class="nav-bar">
+        <div class="nav-btn" onclick="navBack()">⟵</div>
+        <div class="nav-btn" onclick="navForward()">⟶</div>
+        <div class="nav-btn" onclick="navReload()">⟳</div>
+        <input type="text" id="addr-bar" placeholder="Пошук або URL..." onkeypress="handleUrl(event)">
     </div>
 
-    <div class="main-wrapper">
+    <div class="main-container">
         <div class="sidebar">
-            <div class="side-btn" onclick="createTab('https://web.telegram.org', 'Telegram')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg">
-            </div>
-            <div class="side-btn" onclick="createTab('https://discord.com/app', 'Discord')">
-                <img src="https://www.svgrepo.com/show/353655/discord-icon.svg">
-                <div class="dot"></div>
-            </div>
-            <div class="side-btn" onclick="createTab('https://www.bing.com', 'Bing')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Bing_Fluent_Logo.svg">
-            </div>
+            <div class="side-icon" onclick="openTab('https://web.telegram.org', 'Telegram')"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"></div>
+            <div class="side-icon" onclick="openTab('https://discord.com/app', 'Discord')"><img src="https://www.svgrepo.com/show/353655/discord-icon.svg"><div class="dot"></div></div>
+            <div class="side-icon" onclick="openTab('https://www.youtube.com/embed', 'YouTube')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"></div>
         </div>
 
-        <div id="content-area">
-            <div id="home-screen">
-                <div class="logo"><span class="orange">Hybrid</span> Browser</div>
-                <p style="color: #888;">Швидкий. Помаранчевий. Твій.</p>
-                <input type="text" class="main-search" placeholder="Що знайдемо сьогодні?" onkeypress="handleEnter(event)">
+        <div id="viewport">
+            <div id="home">
+                <div class="logo"><span class="orange">HYBRID</span> GX</div>
+                
+                <div class="search-container">
+                    <input type="text" class="main-input" placeholder="Шукати в інтернеті..." onkeypress="handleUrl(event)">
+                </div>
+
+                <div class="speed-dial">
+                    <div class="dial-item" onclick="openTab('https://www.roblox.com', 'Roblox')">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg">
+                        <span>Roblox</span>
+                    </div>
+                    <div class="dial-item" onclick="openTab('https://web.archive.org', 'Archive')">
+                        <img src="https://archive.org/favicon.ico">
+                        <span>Archive</span>
+                    </div>
+                    <div class="dial-item" onclick="openTab('https://github.com', 'GitHub')">
+                        <img src="https://github.githubassets.com/favicons/favicon.svg">
+                        <span>GitHub</span>
+                    </div>
+                    <div class="dial-item" onclick="openTab('https://poki.com', 'Poki Games')">
+                        <img src="https://poki.com/favicon.ico">
+                        <span>Poki Games</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        let tabIdCounter = 0;
-        let activeFrameId = 'home-screen';
+        let tabCount = 0;
+        let activeId = 'home';
 
-        function handleEnter(e) {
+        function handleUrl(e) {
             if (e.key === 'Enter') {
-                let val = e.target.value;
-                if (!val) return;
-                
-                let targetUrl;
-                if (val.includes('.') && !val.includes(' ')) {
-                    targetUrl = val.startsWith('http') ? val : 'https://' + val;
-                } else {
-                    // Використовуємо Bing, бо він дозволяє вбудовування
-                    targetUrl = 'https://www.bing.com/search?q=' + encodeURIComponent(val);
-                }
-                createTab(targetUrl, 'Пошук');
+                let v = e.target.value;
+                if (!v) return;
+                let url = (v.includes('.') && !v.includes(' ')) ? (v.startsWith('http') ? v : 'https://' + v) : 'https://duckduckgo.com/?q=' + encodeURIComponent(v);
+                openTab(url, 'Вкладка');
                 e.target.value = '';
             }
         }
 
-        function createTab(url, title) {
-            tabIdCounter++;
-            const fId = 'frame-' + tabIdCounter;
-            const tId = 'tab-' + tabIdCounter;
+        function openTab(url, title) {
+            tabCount++;
+            let fId = 'f' + tabCount;
+            let tId = 't' + tabCount;
 
-            // Створюємо вкладку зверху
-            const tab = document.createElement('div');
+            let tab = document.createElement('div');
             tab.className = 'tab';
             tab.id = tId;
-            tab.innerHTML = `<span>${title}</span> <span class="close-btn" onclick="deleteTab(event, '${tId}', '${fId}')">×</span>`;
+            tab.innerHTML = `<span>${title}</span> <span class="close-tab" onclick="closeTab(event, '${tId}', '${fId}')">×</span>`;
             tab.onclick = () => showView(fId, tId);
             document.getElementById('tabs').appendChild(tab);
 
-            // Створюємо iframe
-            const ifr = document.createElement('iframe');
+            let ifr = document.createElement('iframe');
             ifr.id = fId;
             ifr.src = url;
-            document.getElementById('content-area').appendChild(ifr);
+            document.getElementById('viewport').appendChild(ifr);
 
             showView(fId, tId);
         }
 
-        function showView(fId, tId = 'tab-home') {
-            activeFrameId = fId;
-            
-            // Ховаємо все
+        function showView(fId, tId = 't-home') {
+            activeId = fId;
             document.querySelectorAll('iframe').forEach(i => i.classList.remove('active'));
-            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('home').classList.toggle('hidden', fId !== 'home');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
-            // Активуємо потрібне
-            if (fId === 'home-screen') {
-                document.getElementById('home-screen').classList.remove('hidden');
-                document.getElementById('url-input').value = '';
+            if (fId !== 'home') {
+                let frame = document.getElementById(fId);
+                frame.classList.add('active');
+                document.getElementById('addr-bar').value = frame.src;
             } else {
-                const currentFrame = document.getElementById(fId);
-                currentFrame.classList.add('active');
-                document.getElementById('url-input').value = currentFrame.src;
+                document.getElementById('addr-bar').value = '';
             }
             document.getElementById(tId).classList.add('active');
         }
 
-        function deleteTab(e, tId, fId) {
+        function closeTab(e, tId, fId) {
             e.stopPropagation();
             document.getElementById(tId).remove();
             document.getElementById(fId).remove();
-            showView('home-screen');
+            showView('home');
         }
 
-        // Кнопки навігації
-        function goBack() { if(activeFrameId !== 'home-screen') document.getElementById(activeFrameId).contentWindow.history.back(); }
-        function goForward() { if(activeFrameId !== 'home-screen') document.getElementById(activeFrameId).contentWindow.history.forward(); }
-        function refreshPage() { 
-            if(activeFrameId !== 'home-screen') {
-                const f = document.getElementById(activeFrameId);
-                f.src = f.src;
-            }
-        }
+        function navBack() { if(activeId !== 'home') document.getElementById(activeId).contentWindow.history.back(); }
+        function navForward() { if(activeId !== 'home') document.getElementById(activeId).contentWindow.history.forward(); }
+        function navReload() { if(activeId !== 'home') { let f = document.getElementById(activeId); f.src = f.src; } }
     </script>
 </body>
 </html>
