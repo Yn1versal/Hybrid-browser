@@ -4,32 +4,54 @@
     <meta charset="UTF-8">
     <title>Hybrid GX</title>
     <style>
-        /* Стилі залишаємо ті ж самі, бо вони тобі сподобалися */
         :root { --accent: #FF8C00; --bg: #0b0b0b; --sidebar-bg: #050505; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* Вкладки */
         #tabs { background: #000; display: flex; padding: 8px 10px 0; gap: 5px; border-bottom: 2px solid var(--accent); height: 42px; }
         .tab { background: #1a1a1a; padding: 6px 15px; border-radius: 5px 5px 0 0; cursor: pointer; min-width: 130px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; color: #888; border-bottom: none; }
         .tab.active { background: var(--accent); color: black; font-weight: bold; border-color: var(--accent); }
+
+        /* Навігація */
         .nav-bar { background: #151515; padding: 8px 15px; display: flex; gap: 15px; align-items: center; border-bottom: 1px solid #222; }
-        .nav-btn { cursor: pointer; color: var(--accent); font-size: 20px; user-select: none; }
+        .nav-btn { cursor: pointer; color: var(--accent); font-size: 20px; user-select: none; transition: 0.2s; }
+        .nav-btn:hover { transform: scale(1.1); }
         #addr-bar { flex: 1; background: #000; border: 1px solid #333; color: #ccc; padding: 6px 15px; border-radius: 4px; outline: none; }
+
         .container { display: flex; flex: 1; overflow: hidden; }
+
+        /* Бокова панель */
         .sidebar { width: 65px; background: var(--sidebar-bg); display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #222; z-index: 100; }
-        .side-icon { margin-bottom: 25px; cursor: pointer; }
+        .side-icon { margin-bottom: 25px; cursor: pointer; transition: 0.2s; }
+        .side-icon:hover { transform: scale(1.1); }
         .side-icon img { width: 32px; height: 32px; border-radius: 6px; }
+
+        /* Вікно перегляду */
         #viewport { flex: 1; position: relative; background: #000; }
         .view-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; background: white; }
         .view-frame.active { display: block; }
         iframe { width: 100%; height: 100%; border: none; background: white; }
+
+        /* Головна сторінка */
         #home-view { display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; background: var(--bg); text-align: center; }
         .logo { font-size: 70px; font-weight: bold; margin-bottom: 5px; }
         .orange { color: var(--accent); }
+        .subtitle { color: #444; margin-bottom: 30px; font-size: 12px; letter-spacing: 3px; }
+
         .search-container { position: relative; width: 550px; margin-bottom: 40px; }
-        .main-search { width: 100%; padding: 15px 25px; border-radius: 30px; border: 2px solid #222; background: #111; color: white; font-size: 16px; outline: none; }
+        .main-search { width: 100%; padding: 15px 25px; border-radius: 30px; border: 2px solid #222; background: #111; color: white; font-size: 16px; outline: none; transition: 0.3s; }
+        .main-search:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(255,140,0,0.1); }
+        
+        /* Плитки швидкого доступу */
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 550px; }
-        .tile { background: #161616; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid #222; }
-        .rocket-fix { position: absolute; bottom: 20px; right: 20px; background: var(--accent); color: black; padding: 10px 18px; border-radius: 5px; font-weight: bold; cursor: pointer; display: none; z-index: 1000; }
+        .tile { background: #161616; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid #222; transition: 0.2s; }
+        .tile:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .tile img { width: 30px; height: 30px; margin-bottom: 8px; }
+        .tile span { font-size: 11px; color: #777; display: block; }
+
+        /* Ракетна допомога */
+        .rocket-fix { position: absolute; bottom: 20px; right: 20px; background: var(--accent); color: black; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; display: none; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
@@ -39,15 +61,15 @@
     </div>
 
     <div class="nav-bar">
-        <div class="nav-btn" onclick="history.back()">⟵</div>
+        <div class="nav-btn" onclick="goBack()">⟵</div>
         <div class="nav-btn" onclick="location.reload()">⟳</div>
-        <input type="text" id="addr-bar" placeholder="Введіть URL..." onkeypress="handleEnter(event)">
-        <div class="nav-btn" onclick="forceOpen()">🚀</div>
+        <input type="text" id="addr-bar" placeholder="Введіть адресу сайту..." onkeypress="handleEnter(event)">
+        <div class="nav-btn" onclick="forceOpen()" title="Відкрити прямо">🚀</div>
     </div>
 
     <div class="container">
         <div class="sidebar">
-            <div class="side-icon" onclick="createTab('https://www.youtube.com','YouTube')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"></div>
+            <div class="side-icon" onclick="createTab('https://www.youtube.com/?app=desktop&hl=ru','YouTube')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"></div>
             <div class="side-icon" onclick="createTab('https://web.telegram.org/','Telegram')"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"></div>
             <div class="side-icon" onclick="createTab('https://www.google.com','Google')"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"></div>
         </div>
@@ -55,19 +77,21 @@
         <div id="viewport">
             <div id="home-view" class="view-frame active">
                 <div class="logo">Hybrid <span class="orange">GX</span></div>
+                <div class="subtitle">ULTIMATE UI EXPERIENCE</div>
                 <div class="search-container">
-                    <input type="text" class="main-search" placeholder="Введіть адресу сайту..." onkeypress="handleEnter(event)">
+                    <input type="text" class="main-search" placeholder="Введіть URL або пошуковий запит..." onkeypress="handleEnter(event)">
                 </div>
                 <div class="grid">
-                    <div class="tile" onclick="createTab('https://www.roblox.com','Roblox')"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg"><br><span style="font-size:11px">Roblox</span></div>
-                    <div class="tile" onclick="createTab('https://poki.com','Poki')"><img src="https://poki.com/favicon.ico"><br><span style="font-size:11px">Poki</span></div>
-                    <div class="tile" onclick="createTab('https://github.com','GitHub')"><img src="https://github.githubassets.com/favicons/favicon.svg"><br><span style="font-size:11px">GitHub</span></div>
-                    <div class="tile" onclick="createTab('https://www.twitch.tv','Twitch')"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Twitch_Glitch_Logo_Purple.svg"><br><span style="font-size:11px">Twitch</span></div>
+                    <div class="tile" onclick="createTab('https://www.roblox.com','Roblox')"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg"><span>Roblox</span></div>
+                    <div class="tile" onclick="createTab('https://poki.com','Poki')"><img src="https://poki.com/favicon.ico"><span>Poki</span></div>
+                    <div class="tile" onclick="createTab('https://github.com','GitHub')"><img src="https://github.githubassets.com/favicons/favicon.svg"><span>GitHub</span></div>
+                    <div class="tile" onclick="createTab('https://www.twitch.tv','Twitch')"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Twitch_Glitch_Logo_Purple.svg"><span>Twitch</span></div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="rocket" class="rocket-fix" onclick="forceOpen()">Відкрити через «Ракету» 🚀</div>
+    
+    <div id="rocket" class="rocket-fix" onclick="forceOpen()">Сайт блокується? Тисни 🚀</div>
 
     <script>
         let tabCounter = 0;
@@ -77,7 +101,8 @@
             if (e.key === 'Enter') {
                 let v = e.target.value;
                 if (!v) return;
-                let url = (v.startsWith('http')) ? v : 'https://' + v;
+                // Автоматичне додавання https, якщо це просто домен
+                let url = (v.includes('.') && !v.includes(' ')) ? (v.startsWith('http') ? v : 'https://' + v) : 'https://www.google.com/search?q=' + encodeURIComponent(v);
                 createTab(url, 'Вкладка');
                 e.target.value = '';
             }
@@ -89,13 +114,15 @@
             const tId = 'tab' + tabCounter;
             activeUrl = url;
 
+            // Створюємо нову вкладку
             const tab = document.createElement('div');
             tab.className = 'tab';
             tab.id = tId;
-            tab.innerHTML = `<span>${title}</span> <span style="margin-left:10px" onclick="closeTab(event,'${tId}','${pId}')">×</span>`;
+            tab.innerHTML = `<span>${title}</span> <span style="margin-left:10px; font-weight:normal" onclick="closeTab(event,'${tId}','${pId}')">×</span>`;
             tab.onclick = () => showPage(pId, tId, url);
             document.getElementById('tabs').appendChild(tab);
 
+            // Створюємо фрейм для сайту
             const page = document.createElement('div');
             page.className = 'view-frame';
             page.id = pId;
@@ -110,8 +137,13 @@
             activeUrl = url;
             document.querySelectorAll('.view-frame').forEach(f => f.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(pId).classList.add('active');
-            document.getElementById(tId).classList.add('active');
+            
+            const targetPage = document.getElementById(pId);
+            const targetTab = document.getElementById(tId);
+            
+            if(targetPage) targetPage.classList.add('active');
+            if(targetTab) targetTab.classList.add('active');
+            
             document.getElementById('addr-bar').value = (pId === 'home-view') ? '' : url;
         }
 
@@ -123,6 +155,7 @@
         }
 
         function forceOpen() { if(activeUrl) window.open(activeUrl, '_blank'); }
+        function goBack() { const f = document.querySelector('.view-frame.active iframe'); if(f) try { f.contentWindow.history.back(); } catch(e) { console.warn("Back navigation blocked by security"); } }
     </script>
 </body>
 </html>
