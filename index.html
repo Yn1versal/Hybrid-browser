@@ -3,153 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hybrid Browser v6.0</title>
-    <link rel="icon" href="https://www.vectorlogo.zone/logos/discordapp/discordapp-icon.svg">
+    <title>Hybrid Browser v7.0</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #121212; color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Панель вкладок */
-        .tabs-container { background: #1a1a1a; display: flex; align-items: flex-end; padding: 8px 10px 0; gap: 4px; border-bottom: 1px solid #333; }
-        .tab { background: #2d2d2d; padding: 8px 15px; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 12px; min-width: 120px; max-width: 180px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; border-bottom: none; color: #aaa; }
+        /* Вкладки */
+        .tabs-bar { background: #1a1a1a; display: flex; align-items: flex-end; padding: 8px 10px 0; gap: 5px; border-bottom: 1px solid #333; height: 45px; }
+        .tab { background: #2d2d2d; padding: 8px 15px; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 12px; min-width: 120px; display: flex; justify-content: space-between; align-items: center; color: #aaa; border: 1px solid #333; border-bottom: none; }
         .tab.active { background: #FF8C00; color: black; font-weight: bold; border-color: #FF8C00; }
-        .tab .close-tab { margin-left: 10px; opacity: 0.6; font-size: 16px; }
-        .tab .close-tab:hover { color: red; opacity: 1; }
+        .close-btn { margin-left: 10px; font-size: 16px; cursor: pointer; }
 
-        /* Панель навігації (Стрілки) */
-        .nav-bar { background: #222; padding: 5px 15px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #FF8C00; }
-        .nav-btn { cursor: pointer; font-size: 20px; color: #FF8C00; user-select: none; transition: 0.2s; }
-        .nav-btn:hover { transform: scale(1.2); color: white; }
-        .address-bar { flex: 1; background: #121212; border: 1px solid #444; padding: 5px 15px; border-radius: 15px; color: #ccc; font-size: 13px; outline: none; }
+        /* Навігація */
+        .nav-bar { background: #222; padding: 8px 15px; display: flex; align-items: center; gap: 15px; border-bottom: 2px solid #FF8C00; }
+        .nav-btn { cursor: pointer; font-size: 18px; color: #FF8C00; user-select: none; font-weight: bold; }
+        .address-input { flex: 1; background: #121212; border: 1px solid #444; padding: 6px 15px; border-radius: 20px; color: #ccc; outline: none; }
 
-        /* Робоча зона */
-        .wrapper { display: flex; flex: 1; overflow: hidden; }
-        .sidebar { width: 60px; background: #181818; display: flex; flex-direction: column; align-items: center; padding-top: 15px; border-right: 1px solid #333; }
-        .side-icon { width: 40px; height: 40px; margin-bottom: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; }
-        .side-icon img { width: 28px; height: 28px; }
-        .notif { position: absolute; top: 0; right: 0; width: 10px; height: 10px; background: red; border-radius: 50%; border: 2px solid #181818; }
+        /* Контентна частина */
+        .app-body { display: flex; flex: 1; overflow: hidden; }
 
-        .main-content { flex: 1; position: relative; background: #121212; }
+        /* БОКОВА ПАНЕЛЬ (вона тепер точно нікуди не зникне) */
+        .sidebar { width: 70px; background: #181818; display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #333; z-index: 100; }
+        .side-btn { width: 45px; height: 45px; margin-bottom: 20px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; position: relative; }
+        .side-btn img { width: 32px; height: 32px; border-radius: 5px; }
+        .side-btn:hover { transform: scale(1.1); }
+        .dot { position: absolute; top: 0; right: 0; width: 12px; height: 12px; background: #ff1b2d; border-radius: 50%; border: 2px solid #181818; }
+
+        /* Вікна сайтів */
+        .view-container { flex: 1; position: relative; background: #121212; }
         iframe { width: 100%; height: 100%; border: none; display: none; background: white; }
         iframe.active { display: block; }
 
-        /* Головна */
-        .home-page { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
-        .home-page.hidden { display: none; }
-        .logo { font-size: 60px; font-weight: bold; margin-bottom: 20px; }
+        /* Головна сторінка */
+        .home-ui { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; transition: 0.3s; }
+        .home-ui.hidden { display: none; }
+        .logo { font-size: 64px; font-weight: bold; margin-bottom: 10px; }
         .orange { color: #FF8C00; }
     </style>
 </head>
 <body>
 
-    <div class="tabs-container" id="tabBar">
-        <div class="tab active" id="main-tab" onclick="switchTab('home-view', 'main-tab')">
+    <div class="tabs-bar" id="tabsBar">
+        <div class="tab active" id="tab-home" onclick="showTab('home-ui', 'tab-home')">
             <span>🏠 Головна</span>
         </div>
     </div>
 
     <div class="nav-bar">
-        <div class="nav-btn" onclick="goBack()">⟵</div>
-        <div class="nav-btn" onclick="goForward()">⟶</div>
-        <div class="nav-btn" onclick="reloadTab()">⟳</div>
-        <input type="text" class="address-bar" id="addrBar" placeholder="Введіть адресу..." onkeypress="handleSearch(event)">
+        <div class="nav-btn" onclick="navBack()">⟵</div>
+        <div class="nav-btn" onclick="navForward()">⟶</div>
+        <div class="nav-btn" onclick="navReload()">⟳</div>
+        <input type="text" class="address-input" id="urlInput" placeholder="Введіть запит у Google або URL-адресу..." onkeypress="handleInput(event)">
     </div>
 
-    <div class="wrapper">
+    <div class="app-body">
         <div class="sidebar">
-            <div class="side-icon" onclick="openInTab('https://web.telegram.org', 'Telegram')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg">
+            <div class="side-btn" onclick="newTab('https://web.telegram.org', 'Telegram')">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="TG">
             </div>
-            <div class="side-icon" onclick="openInTab('https://discord.com/app', 'Discord')">
-                <img src="https://www.svgrepo.com/show/353655/discord-icon.svg">
-                <div class="notif"></div>
+            <div class="side-btn" onclick="newTab('https://discord.com/app', 'Discord')">
+                <img src="https://www.svgrepo.com/show/353655/discord-icon.svg" alt="DS">
+                <div class="dot"></div>
             </div>
-            <div class="side-icon" onclick="openInTab('https://www.bing.com', 'Bing')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Bing_Fluent_Logo.svg">
+            <div class="side-btn" onclick="newTab('https://www.youtube.com/embed', 'YouTube')">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YT">
             </div>
         </div>
 
-        <div class="main-content" id="mainContent">
-            <div id="home-view" class="home-page">
+        <div class="view-container" id="viewContainer">
+            <div id="home-ui" class="home-ui">
                 <div class="logo"><span class="orange">Hybrid</span> browser</div>
-                <p style="color: #666;">Введіть URL або виберіть сервіс зліва</p>
+                <p style="color: #555;">v7.0 Stable Edition</p>
             </div>
         </div>
     </div>
 
     <script>
-        let tabCounter = 0;
-        let activeIframeId = null;
+        let counter = 0;
+        let currentFrameId = null;
 
-        function handleSearch(e) {
+        function handleInput(e) {
             if (e.key === 'Enter') {
-                let url = e.target.value;
-                if (!url.startsWith('http')) url = 'https://' + url;
-                openInTab(url, 'Нова вкладка');
+                let val = e.target.value;
+                let url;
+                if (val.includes('.') && !val.includes(' ')) {
+                    url = val.startsWith('http') ? val : 'https://' + val;
+                } else {
+                    url = 'https://www.google.com/search?q=' + encodeURIComponent(val);
+                }
+                newTab(url, 'Пошук');
+                e.target.value = '';
             }
         }
 
-        function openInTab(url, title) {
-            tabCounter++;
-            const tabId = 'tab-btn-' + tabCounter;
-            const frameId = 'frame-' + tabCounter;
+        function newTab(url, title) {
+            counter++;
+            const tId = 't-' + counter;
+            const fId = 'f-' + counter;
 
+            // Створюємо вкладку
             const tab = document.createElement('div');
             tab.className = 'tab';
-            tab.id = tabId;
-            tab.innerHTML = `<span>${title}</span> <span class="close-tab" onclick="closeTab(event, '${tabId}', '${frameId}')">×</span>`;
-            tab.onclick = () => switchTab(frameId, tabId);
+            tab.id = tId;
+            tab.innerHTML = `<span>${title}</span> <span class="close-btn" onclick="removeTab(event, '${tId}', '${fId}')">×</span>`;
+            tab.onclick = () => showTab(fId, tId);
 
-            const iframe = document.createElement('iframe');
-            iframe.id = frameId;
-            iframe.src = url;
+            // Створюємо фрейм
+            const ifr = document.createElement('iframe');
+            ifr.id = fId;
+            ifr.src = url;
 
-            document.getElementById('tabBar').appendChild(tab);
-            document.getElementById('mainContent').appendChild(iframe);
-            document.getElementById('addrBar').value = url;
+            document.getElementById('tabsBar').appendChild(tab);
+            document.getElementById('viewContainer').appendChild(ifr);
 
-            switchTab(frameId, tabId);
+            showTab(fId, tId);
         }
 
-        function switchTab(frameId, tabId) {
-            activeIframeId = (frameId === 'home-view') ? null : frameId;
-            
-            document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
-            document.getElementById('home-view').classList.add('hidden');
-            
-            if (frameId === 'home-view') {
-                document.getElementById('home-view').classList.remove('hidden');
-                document.getElementById('addrBar').value = '';
-            } else {
-                const activeFrame = document.getElementById(frameId);
-                activeFrame.classList.add('active');
-                document.getElementById('addrBar').value = activeFrame.src;
-            }
+        function showTab(fId, tId) {
+            currentFrameId = (fId === 'home-ui') ? null : fId;
 
+            // Ховаємо все
+            document.querySelectorAll('iframe').forEach(i => i.classList.remove('active'));
+            document.getElementById('home-ui').classList.add('hidden');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-        }
 
-        function closeTab(event, tabId, frameId) {
-            event.stopPropagation();
-            document.getElementById(tabId).remove();
-            document.getElementById(frameId).remove();
-            switchTab('home-view', 'main-tab');
-        }
-
-        // Функції для стрілок навігації
-        function goBack() {
-            if (activeIframeId) document.getElementById(activeIframeId).contentWindow.history.back();
-        }
-        function goForward() {
-            if (activeIframeId) document.getElementById(activeIframeId).contentWindow.history.forward();
-        }
-        function reloadTab() {
-            if (activeIframeId) {
-                const frame = document.getElementById(activeIframeId);
-                frame.src = frame.src;
+            // Показуємо потрібне
+            if (fId === 'home-ui') {
+                document.getElementById('home-ui').classList.remove('hidden');
+            } else {
+                document.getElementById(fId).classList.add('active');
+                document.getElementById('urlInput').value = document.getElementById(fId).src;
             }
+            document.getElementById(tId).classList.add('active');
         }
+
+        function removeTab(e, tId, fId) {
+            e.stopPropagation();
+            document.getElementById(tId).remove();
+            document.getElementById(fId).remove();
+            showTab('home-ui', 'tab-home');
+        }
+
+        function navBack() { if(currentFrameId) document.getElementById(currentFrameId).contentWindow.history.back(); }
+        function navForward() { if(currentFrameId) document.getElementById(currentFrameId).contentWindow.history.forward(); }
+        function navReload() { if(currentFrameId) { let f = document.getElementById(currentFrameId); f.src = f.src; } }
     </script>
 </body>
 </html>
