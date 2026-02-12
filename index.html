@@ -2,137 +2,135 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Hybrid Browser v3.0</title>
+    <title>Hybrid Browser v4.0</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            background: #121212;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            color: white;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
+        body { background: #121212; color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Sidebar */
-        .sidebar {
-            width: 70px;
+        /* Панель вкладок */
+        .tab-bar {
             background: #1a1a1a;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 25px;
-            border-right: 1px solid #2d2d2d;
+            align-items: flex-end;
+            padding: 5px 10px 0;
+            gap: 5px;
+            border-bottom: 2px solid #FF8C00;
         }
 
-        .side-icon {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 20px;
-            border-radius: 12px;
+        .tab {
+            background: #2d2d2d;
+            padding: 8px 20px;
+            border-radius: 8px 8px 0 0;
             cursor: pointer;
+            font-size: 13px;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: 0.2s ease;
-            background: #252525;
+            gap: 8px;
+            transition: 0.2s;
         }
 
-        .side-icon:hover {
-            background: #333;
-            transform: scale(1.1);
+        .tab.active { background: #FF8C00; color: black; font-weight: bold; }
+
+        .add-tab {
+            padding: 8px 15px;
+            cursor: pointer;
+            color: #FF8C00;
+            font-weight: bold;
         }
 
-        .side-icon img, .side-icon svg {
-            width: 28px;
-            height: 28px;
+        /* Контент (сайти) */
+        .content-area { flex-grow: 1; position: relative; }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none; /* Ховаємо всі іфрейми за замовчуванням */
+            background: white;
         }
 
-        /* Main Area */
-        .main-container {
-            flex-grow: 1;
+        iframe.active { display: block; }
+
+        /* Головна сторінка (якщо немає відкритих сайтів) */
+        .home-screen {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: radial-gradient(circle at center, #1e1e1e 0%, #121212 100%);
+            height: 100%;
+            background: radial-gradient(circle, #1e1e1e, #121212);
         }
 
-        .logo {
-            font-size: 64px;
-            font-weight: 800;
-            margin-bottom: 35px;
-        }
-
-        .orange-text { color: #FF8C00; }
-
-        .search-box {
-            width: 90%;
-            max-width: 600px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 16px 28px;
-            border-radius: 30px;
-            border: 1px solid #3c4043;
-            background: #202124;
-            color: white;
-            font-size: 18px;
-            outline: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        .speed-dial {
-            margin-top: 45px;
-            display: flex;
-            gap: 15px;
-        }
-
-        .tile {
-            background: #2a2a2a;
-            padding: 12px 25px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #ddd;
-            font-size: 14px;
-        }
+        .logo { font-size: 48px; margin-bottom: 20px; }
+        .orange { color: #FF8C00; }
+        
+        .search-bar { width: 500px; padding: 12px 20px; border-radius: 20px; border: 1px solid #333; background: #222; color: white; outline: none; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="side-icon" onclick="window.open('https://web.telegram.org', '_blank')">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="TG">
-        </div>
+    <div class="tab-bar" id="tabBar">
+        <div class="tab active" onclick="showTab('home')">Домашня</div>
+        <div class="add-tab" onclick="addNewTab()">+</div>
+    </div>
 
-        <div class="side-icon" onclick="window.open('https://discord.com/app', '_blank')">
-            <svg viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
-                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.71,32.65-1.78,56.63.48,80.21a105.73,105.73,0,0,0,32.21,16.15,77.7,77.7,0,0,0,6.89-11.11,68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.24-16.14C129.38,50.49,124.71,26.54,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.07,65.69,84.69,65.69Z" fill="#5865F2"/>
-            </svg>
-        </div>
-
-        <div class="side-icon" onclick="window.open('https://www.youtube.com', '_blank')">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YT">
+    <div class="content-area" id="contentArea">
+        <div id="home" class="home-screen active">
+            <div class="logo"><span class="orange">Hybrid</span> Browser</div>
+            <input type="text" class="search-bar" placeholder="Введіть URL (напр. https://bing.com) і натисніть Enter" onkeypress="handleUrl(event)">
         </div>
     </div>
 
-    <div class="main-container">
-        <div class="logo"><span class="orange-text">Hybrid</span> browser</div>
-        
-        <div class="search-box">
-            <form action="https://www.google.com/search" method="get">
-                <input type="text" name="q" placeholder="Шукати в Google..." autocomplete="off">
-            </form>
-        </div>
+    <script>
+        let tabCount = 0;
 
-        <div class="speed-dial">
-            <a href="https://github.com" class="tile">GitHub</a>
-            <a href="https://youtube.com" class="tile">YouTube</a>
-            <a href="https://chatgpt.com" class="tile">ChatGPT</a>
-        </div>
-    </div>
+        function showTab(tabId) {
+            // Ховаємо весь контент
+            document.querySelectorAll('iframe, .home-screen').forEach(el => el.classList.remove('active'));
+            // Знімаємо активність з усіх вкладок
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
 
+            // Показуємо потрібний контент
+            document.getElementById(tabId).classList.add('active');
+            // Робимо вкладку активною (тут треба логіка пошуку по тексту або ID)
+        }
+
+        function handleUrl(e) {
+            if (e.key === 'Enter') {
+                let url = e.target.value;
+                if (!url.startsWith('http')) url = 'https://' + url;
+                addNewTab(url);
+                e.target.value = '';
+            }
+        }
+
+        function addNewTab(url = '') {
+            tabCount++;
+            const tabId = 'tab-' + tabCount;
+
+            // Створюємо вкладку
+            const tab = document.createElement('div');
+            tab.className = 'tab active';
+            tab.innerText = url ? url.split('/')[2] : 'Нова вкладка';
+            tab.onclick = () => showTab(tabId);
+            
+            // Створюємо фрейм для сайту
+            const iframe = document.createElement('iframe');
+            iframe.id = tabId;
+            iframe.src = url;
+            iframe.className = 'active';
+
+            // Приховуємо інші
+            document.querySelectorAll('iframe, .home-screen').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+
+            document.getElementById('tabBar').insertBefore(tab, document.querySelector('.add-tab'));
+            document.getElementById('contentArea').appendChild(iframe);
+        }
+    </script>
 </body>
 </html>
