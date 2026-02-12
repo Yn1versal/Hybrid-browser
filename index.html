@@ -8,44 +8,37 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Вкладки */
+        /* Tabs UI */
         #tabs { background: #000; display: flex; padding: 8px 10px 0; gap: 5px; border-bottom: 2px solid var(--accent); height: 42px; }
         .tab { background: #1a1a1a; padding: 6px 15px; border-radius: 5px 5px 0 0; cursor: pointer; min-width: 120px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; color: #888; border-bottom: none; }
         .tab.active { background: var(--accent); color: black; font-weight: bold; border-color: var(--accent); }
 
-        /* Навігація */
+        /* Nav UI */
         .nav-bar { background: #151515; padding: 8px 15px; display: flex; gap: 15px; align-items: center; border-bottom: 1px solid #222; }
-        .nav-btn { cursor: pointer; color: var(--accent); font-size: 20px; user-select: none; transition: 0.2s; }
-        #addr-bar { flex: 1; background: #000; border: 1px solid #333; color: #ccc; padding: 6px 15px; border-radius: 4px; outline: none; font-size: 13px; }
+        .nav-btn { cursor: pointer; color: var(--accent); font-size: 20px; user-select: none; }
+        #addr-bar { flex: 1; background: #000; border: 1px solid #333; color: #ccc; padding: 6px 15px; border-radius: 4px; outline: none; }
 
         .container { display: flex; flex: 1; overflow: hidden; position: relative; }
 
-        /* Бокова панель */
+        /* Sidebar */
         .sidebar { width: 65px; background: var(--sidebar-bg); display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #222; z-index: 20; }
         .side-icon { margin-bottom: 25px; cursor: pointer; transition: 0.2s; }
         .side-icon img { width: 32px; height: 32px; border-radius: 5px; }
 
-        /* Контент */
+        /* Content Viewport */
         #viewport { flex: 1; position: relative; background: #000; }
         .view-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; background: white; }
         .view-frame.active { display: block; }
         iframe { width: 100%; height: 100%; border: none; }
 
-        /* Головна сторінка */
+        /* Home View */
         #home-view { display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; background: var(--bg); }
-        .logo { font-size: 65px; font-weight: bold; margin-bottom: 30px; }
+        .logo { font-size: 65px; font-weight: bold; margin-bottom: 30px; text-shadow: 0 0 20px rgba(255,140,0,0.3); }
         .orange { color: var(--accent); }
-
         .main-search { width: 500px; padding: 15px 25px; border-radius: 30px; border: 2px solid #333; background: #111; color: white; font-size: 16px; outline: none; margin-bottom: 40px; }
-        
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
-        .tile { background: #161616; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid #222; width: 100px; transition: 0.2s; }
-        .tile:hover { border-color: var(--accent); transform: translateY(-3px); }
-        .tile img { width: 30px; height: 30px; margin-bottom: 8px; }
-        .tile span { font-size: 11px; color: #aaa; display: block; }
 
-        /* Повідомлення */
-        .rocket-btn { background: var(--accent); color: black; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; position: absolute; bottom: 20px; right: 20px; display: none; z-index: 100; }
+        /* Helper Components */
+        .error-msg { position: absolute; bottom: 20px; right: 20px; background: var(--accent); color: black; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; display: none; z-index: 100; }
     </style>
 </head>
 <body>
@@ -57,13 +50,13 @@
     <div class="nav-bar">
         <div class="nav-btn" onclick="goBack()">⟵</div>
         <div class="nav-btn" onclick="location.reload()">⟳</div>
-        <input type="text" id="addr-bar" placeholder="Пошук Bing (працює тут) або URL..." onkeypress="handleSearch(event)">
-        <div class="nav-btn" onclick="forceOpen()" title="Відкрити прямо">🚀</div>
+        <input type="text" id="addr-bar" placeholder="Шукайте в Bing або введіть URL..." onkeypress="handleEnter(event)">
+        <div class="nav-btn" onclick="forceLaunch()" title="Відкрити у новій вкладці">🚀</div>
     </div>
 
     <div class="container">
         <div class="sidebar">
-            <div class="side-icon" onclick="createTab('https://www.youtube.com/embed/','YouTube')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"></div>
+            <div class="side-icon" onclick="createTab('https://www.youtube.com/embed?listType=trending','YouTube')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"></div>
             <div class="side-icon" onclick="createTab('https://www.bing.com','Bing')"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Bing_Fluent_Logo.svg"></div>
             <div class="side-icon" onclick="createTab('https://web.telegram.org/a/','Telegram')"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"></div>
         </div>
@@ -71,27 +64,21 @@
         <div id="viewport">
             <div id="home-view" class="view-frame active">
                 <div class="logo">Hybrid <span class="orange">GX</span></div>
-                <input type="text" class="main-search" placeholder="Шукати в інтернеті через Bing..." onkeypress="handleSearch(event)">
-                <div class="grid">
-                    <div class="tile" onclick="createTab('https://www.roblox.com','Roblox')"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg"><span>Roblox</span></div>
-                    <div class="tile" onclick="createTab('https://poki.com','Poki')"><img src="https://poki.com/favicon.ico"><span>Poki</span></div>
-                    <div class="tile" onclick="createTab('https://github.com','GitHub')"><img src="https://github.githubassets.com/favicons/favicon.svg"><span>GitHub</span></div>
-                    <div class="tile" onclick="createTab('https://www.twitch.tv','Twitch')"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Twitch_Glitch_Logo_Purple.svg"><span>Twitch</span></div>
-                </div>
+                <input type="text" class="main-search" placeholder="Шукати в інтернеті через Bing..." onkeypress="handleEnter(event)">
             </div>
         </div>
-        <div id="rocket" class="rocket-btn" onclick="forceOpen()">Сайт заблоковано? Натисни тут! 🚀</div>
+        <div id="helper" class="error-msg" onclick="forceLaunch()">Сайт не вантажиться? Тисни сюди! 🚀</div>
     </div>
 
     <script>
-        let tabCount = 0;
-        let currentUrl = '';
+        let counter = 0;
+        let activeUrl = '';
 
-        function handleSearch(e) {
+        function handleEnter(e) {
             if (e.key === 'Enter') {
                 let v = e.target.value;
                 if (!v) return;
-                // ВИКОРИСТОВУЄМО BING ДЛЯ ПОШУКУ
+                // Bing дозволяє вбудовування, тому використовуємо його для пошуку
                 let url = (v.includes('.') && !v.includes(' ')) ? (v.startsWith('http') ? v : 'https://' + v) : 'https://www.bing.com/search?q=' + encodeURIComponent(v);
                 createTab(url, 'Вкладка');
                 e.target.value = '';
@@ -99,16 +86,16 @@
         }
 
         function createTab(url, title) {
-            tabCount++;
-            const pId = 'p-' + tabCount;
-            const tId = 't-' + tabCount;
-            currentUrl = url;
+            counter++;
+            const pId = 'p-' + counter;
+            const tId = 't-' + counter;
+            activeUrl = url;
 
             const tab = document.createElement('div');
             tab.className = 'tab';
             tab.id = tId;
             tab.innerHTML = `<span>${title}</span> <span style="margin-left:10px" onclick="closeTab(event,'${tId}','${pId}')">×</span>`;
-            tab.onclick = () => switchView(pId, tId, url);
+            tab.onclick = () => switchPage(pId, tId, url);
             document.getElementById('tabs').appendChild(tab);
 
             const page = document.createElement('div');
@@ -117,14 +104,14 @@
             page.innerHTML = `<iframe src="${url}"></iframe>`;
             document.getElementById('viewport').appendChild(page);
 
-            switchView(pId, tId, url);
+            switchPage(pId, tId, url);
             
-            // Показуємо кнопку допомоги на всяк випадок
-            document.getElementById('rocket').style.display = 'block';
+            // Показуємо підказку "Ракета", бо багато сайтів блокують фрейми
+            document.getElementById('helper').style.display = 'block';
         }
 
-        function switchView(pId, tId, url = '') {
-            currentUrl = url;
+        function switchPage(pId, tId, url = '') {
+            activeUrl = url;
             document.querySelectorAll('.view-frame').forEach(f => f.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
@@ -134,8 +121,8 @@
         }
 
         function showHome() { 
-            switchView('home-view', 'tab-home'); 
-            document.getElementById('rocket').style.display = 'none';
+            switchPage('home-view', 'tab-home'); 
+            document.getElementById('helper').style.display = 'none';
         }
 
         function closeTab(e, tId, pId) {
@@ -145,7 +132,7 @@
             showHome();
         }
 
-        function forceOpen() { if(currentUrl) window.open(currentUrl, '_blank'); }
+        function forceLaunch() { if(activeUrl) window.open(activeUrl, '_blank'); }
         function goBack() { 
             const f = document.querySelector('.view-frame.active iframe');
             if(f) f.contentWindow.history.back(); 
@@ -153,4 +140,3 @@
     </script>
 </body>
 </html>
-
