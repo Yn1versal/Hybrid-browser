@@ -10,10 +10,10 @@
 
         /* Вкладки */
         #tabs { background: #000; display: flex; padding: 8px 10px 0; gap: 5px; border-bottom: 2px solid var(--accent); height: 42px; }
-        .tab { background: #1a1a1a; padding: 6px 15px; border-radius: 5px 5px 0 0; cursor: pointer; min-width: 120px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; border-bottom: none; color: #888; }
+        .tab { background: #1a1a1a; padding: 6px 15px; border-radius: 5px 5px 0 0; cursor: pointer; min-width: 120px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; color: #888; }
         .tab.active { background: var(--accent); color: black; font-weight: bold; border-color: var(--accent); }
 
-        /* Панель навігації */
+        /* Навігація */
         .nav-bar { background: #151515; padding: 8px 15px; display: flex; gap: 15px; align-items: center; border-bottom: 1px solid #222; }
         .nav-btn { cursor: pointer; color: var(--accent); font-size: 20px; user-select: none; }
         #addr-bar { flex: 1; background: #000; border: 1px solid #333; color: #ccc; padding: 6px 15px; border-radius: 4px; outline: none; }
@@ -21,25 +21,25 @@
         .container { display: flex; flex: 1; overflow: hidden; }
 
         /* Бокова панель */
-        .sidebar { width: 65px; background: var(--sidebar-bg); display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #222; z-index: 10; }
-        .side-icon { margin-bottom: 25px; cursor: pointer; transition: 0.2s; }
+        .sidebar { width: 65px; background: var(--sidebar-bg); display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #222; }
+        .side-icon { margin-bottom: 25px; cursor: pointer; }
         .side-icon img { width: 32px; height: 32px; border-radius: 5px; }
 
-        /* Контент */
+        /* Вікно перегляду */
         #viewport { flex: 1; position: relative; background: #000; }
-        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
+        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; background: #000; }
         .page.active { display: block; }
         iframe { width: 100%; height: 100%; border: none; background: white; }
 
         /* Головна */
-        #home-page { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg); }
+        #home-page { display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .logo { font-size: 60px; font-weight: bold; margin-bottom: 30px; }
         .orange { color: var(--accent); }
-        .main-search { width: 500px; padding: 15px 25px; border-radius: 30px; border: 2px solid #222; background: #111; color: white; font-size: 16px; outline: none; margin-bottom: 40px; }
+        .main-search { width: 500px; padding: 15px 25px; border-radius: 30px; border: 2px solid #333; background: #111; color: white; font-size: 16px; outline: none; margin-bottom: 40px; }
         
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
         .tile { background: #161616; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid #222; width: 100px; }
-        .tile:hover { border-color: var(--accent); transform: translateY(-5px); transition: 0.2s; }
+        .tile:hover { border-color: var(--accent); }
         .tile img { width: 30px; height: 30px; margin-bottom: 8px; }
         .tile span { font-size: 11px; color: #aaa; display: block; }
     </style>
@@ -51,10 +51,9 @@
     </div>
 
     <div class="nav-bar">
-        <div class="nav-btn" onclick="goBack()">⟵</div>
-        <div class="nav-btn" onclick="goForward()">⟶</div>
-        <div class="nav-btn" onclick="reloadPage()">⟳</div>
-        <input type="text" id="addr-bar" placeholder="Шукати в Bing або ввести URL..." onkeypress="checkEnter(event)">
+        <div class="nav-btn" onclick="history.back()">⟵</div>
+        <div class="nav-btn" onclick="location.reload()">⟳</div>
+        <input type="text" id="addr-bar" placeholder="Пошук Bing або URL..." onkeypress="checkEnter(event)">
         <div class="nav-btn" onclick="forceOpen()">🚀</div>
     </div>
 
@@ -68,7 +67,7 @@
         <div id="viewport">
             <div id="home-page" class="page active">
                 <div class="logo"><span class="orange">Hybrid</span> GX</div>
-                <input type="text" class="main-search" placeholder="Пошук через Bing..." onkeypress="checkEnter(event)">
+                <input type="text" class="main-search" placeholder="Шукати в інтернеті..." onkeypress="checkEnter(event)">
                 <div class="grid">
                     <div class="tile" onclick="openNewTab('https://www.roblox.com','Roblox')"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg"><span>Roblox</span></div>
                     <div class="tile" onclick="openNewTab('https://poki.com','Poki')"><img src="https://poki.com/favicon.ico"><span>Poki</span></div>
@@ -80,14 +79,12 @@
     </div>
 
     <script>
-        let tabIdCounter = 0;
-        let activePageId = 'home-page';
+        let counter = 0;
         let currentUrl = '';
 
         function checkEnter(e) {
             if (e.key === 'Enter') {
                 let v = e.target.value;
-                if (!v) return;
                 let url = (v.includes('.') && !v.includes(' ')) ? (v.startsWith('http') ? v : 'https://' + v) : 'https://www.bing.com/search?q=' + encodeURIComponent(v);
                 openNewTab(url, 'Вкладка');
                 e.target.value = '';
@@ -95,42 +92,43 @@
         }
 
         function openNewTab(url, title) {
-            tabIdCounter++;
-            const pId = 'page-' + tabIdCounter;
-            const tId = 'tab-' + tabIdCounter;
+            counter++;
+            const pId = 'p' + counter;
+            const tId = 't' + counter;
             currentUrl = url;
 
-            // Створюємо вкладку
+            // 1. Додаємо вкладку
             const tab = document.createElement('div');
             tab.className = 'tab';
             tab.id = tId;
-            tab.innerHTML = `<span>${title}</span> <span style="margin-left:8px" onclick="closeTab(event,'${tId}','${pId}')">×</span>`;
+            tab.innerHTML = `<span>${title}</span> <span style="margin-left:10px" onclick="closeTab(event,'${tId}','${pId}')">×</span>`;
             tab.onclick = () => showPage(pId, tId, url);
             document.getElementById('tabs').appendChild(tab);
 
-            // Створюємо сторінку з iframe
+            // 2. Додаємо фрейм
             const page = document.createElement('div');
             page.className = 'page';
             page.id = pId;
             page.innerHTML = `<iframe src="${url}"></iframe>`;
             document.getElementById('viewport').appendChild(page);
 
+            // 3. ПЕРЕМИКАЄМО
             showPage(pId, tId, url);
         }
 
         function showPage(pId, tId, url = '') {
-            activePageId = pId;
             currentUrl = url;
-
-            // Ховаємо ВСІ сторінки і вкладки
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // Ховаємо все
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
-            // Показуємо потрібну
-            document.getElementById(pId).classList.add('active');
-            document.getElementById(tId).classList.add('active');
+            // Показуємо вибране
+            const activePage = document.getElementById(pId);
+            const activeTab = document.getElementById(tId);
+            
+            if (activePage) activePage.style.display = 'block';
+            if (activeTab) activeTab.classList.add('active');
 
-            // Оновлюємо адресний рядок
             document.getElementById('addr-bar').value = (pId === 'home-page') ? '' : url;
         }
 
@@ -142,9 +140,6 @@
         }
 
         function forceOpen() { if(currentUrl) window.open(currentUrl, '_blank'); }
-        function reloadPage() { if(activePageId !== 'home-page') { let f = document.querySelector(`#${activePageId} iframe`); f.src = f.src; } }
-        function goBack() { if(activePageId !== 'home-page') { document.querySelector(`#${activePageId} iframe`).contentWindow.history.back(); } }
-        function goForward() { if(activePageId !== 'home-page') { document.querySelector(`#${activePageId} iframe`).contentWindow.history.forward(); } }
     </script>
 </body>
 </html>
