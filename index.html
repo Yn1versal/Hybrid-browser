@@ -8,14 +8,14 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Tabs */
+        /* Вкладки */
         #tabs { background: #000; display: flex; padding: 8px 10px 0; gap: 5px; border-bottom: 2px solid var(--accent); height: 42px; }
-        .tab { background: #1a1a1a; padding: 6px 15px; border-radius: 5px 5px 0 0; cursor: pointer; min-width: 130px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; color: #888; border-bottom: none; }
+        .tab { background: #1a1a1a; padding: 6px 15px; border-radius: 5px 5px 0 0; cursor: pointer; min-width: 130px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; color: #888; border-bottom: none; overflow: hidden; }
         .tab.active { background: var(--accent); color: black; font-weight: bold; border-color: var(--accent); }
 
-        /* Nav */
+        /* Навігація */
         .nav-bar { background: #151515; padding: 8px 15px; display: flex; gap: 15px; align-items: center; border-bottom: 1px solid #222; }
-        .nav-btn { cursor: pointer; color: var(--accent); font-size: 20px; user-select: none; }
+        .nav-btn { cursor: pointer; color: var(--accent); font-size: 20px; user-select: none; transition: 0.2s; }
         #addr-bar { flex: 1; background: #000; border: 1px solid #333; color: #ccc; padding: 6px 15px; border-radius: 4px; outline: none; }
 
         .container { display: flex; flex: 1; overflow: hidden; }
@@ -23,31 +23,32 @@
         /* Sidebar */
         .sidebar { width: 65px; background: var(--sidebar-bg); display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #222; z-index: 100; }
         .side-icon { margin-bottom: 25px; cursor: pointer; transition: 0.2s; }
-        .side-icon:hover { transform: scale(1.1); }
         .side-icon img { width: 32px; height: 32px; border-radius: 6px; }
 
-        /* Viewport */
+        /* Вікно контенту */
         #viewport { flex: 1; position: relative; background: #000; }
         .view-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; background: white; }
         .view-frame.active { display: block; }
-        iframe { width: 100%; height: 100%; border: none; background: white; }
+        iframe { width: 100%; height: 100%; border: none; background: #fff; }
 
-        /* Home View */
+        /* Головна сторінка */
         #home-view { display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; background: var(--bg); text-align: center; }
-        .logo { font-size: 70px; font-weight: bold; margin-bottom: 5px; letter-spacing: -2px; }
+        .logo { font-size: 75px; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255,140,0,0.2); }
         .orange { color: var(--accent); }
-        .subtitle { color: #444; margin-bottom: 30px; font-size: 12px; letter-spacing: 3px; }
-
-        .search-container { position: relative; width: 550px; margin-bottom: 40px; }
-        .main-search { width: 100%; padding: 15px 25px; border-radius: 30px; border: 2px solid #222; background: #111; color: white; font-size: 16px; outline: none; }
         
+        .search-container { width: 550px; margin-bottom: 40px; }
+        .main-search { width: 100%; padding: 18px 25px; border-radius: 30px; border: 2px solid #222; background: #111; color: white; font-size: 16px; outline: none; transition: 0.3s; }
+        .main-search:focus { border-color: var(--accent); }
+        
+        /* Плитки */
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 550px; }
-        .tile { background: #161616; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid #222; transition: 0.2s; }
-        .tile:hover { border-color: var(--accent); transform: translateY(-3px); }
-        .tile img { width: 30px; height: 30px; margin-bottom: 8px; }
-        .tile span { font-size: 11px; color: #777; display: block; }
+        .tile { background: #161616; padding: 20px 10px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid #222; transition: 0.2s; }
+        .tile:hover { border-color: var(--accent); transform: translateY(-5px); background: #1a1a1a; }
+        .tile img { width: 32px; height: 32px; margin-bottom: 10px; }
+        .tile span { font-size: 11px; color: #888; display: block; }
 
-        .rocket-fix { position: absolute; bottom: 20px; right: 20px; background: var(--accent); color: black; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; display: none; z-index: 1000; }
+        /* Повідомлення про блок */
+        #block-notice { position: absolute; bottom: 30px; right: 30px; background: var(--accent); color: black; padding: 15px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; display: none; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
@@ -59,23 +60,22 @@
     <div class="nav-bar">
         <div class="nav-btn" onclick="goBack()">⟵</div>
         <div class="nav-btn" onclick="location.reload()">⟳</div>
-        <input type="text" id="addr-bar" placeholder="Пошук або URL..." onkeypress="handleEnter(event)">
+        <input type="text" id="addr-bar" placeholder="Введіть URL або пошуковий запит..." onkeypress="handleSearch(event)">
         <div class="nav-btn" onclick="forceOpen()">🚀</div>
     </div>
 
     <div class="container">
         <div class="sidebar">
-            <div class="side-icon" onclick="createTab('https://www.youtube.com/embed/','YouTube')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"></div>
-            <div class="side-icon" onclick="createTab('https://www.bing.com','Bing')"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Bing_Fluent_Logo.svg"></div>
+            <div class="side-icon" onclick="createTab('https://www.youtube.com','YouTube')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"></div>
+            <div class="side-icon" onclick="createTab('https://www.google.com/search?igu=1','Google')"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"></div>
             <div class="side-icon" onclick="createTab('https://web.telegram.org/a/','Telegram')"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"></div>
         </div>
 
         <div id="viewport">
             <div id="home-view" class="view-frame active">
                 <div class="logo">Hybrid <span class="orange">GX</span></div>
-                <div class="subtitle">STABLE RELEASE v25.0</div>
                 <div class="search-container">
-                    <input type="text" class="main-search" placeholder="Шукати в Bing..." onkeypress="handleEnter(event)">
+                    <input type="text" class="main-search" placeholder="Що знайдемо сьогодні?" onkeypress="handleSearch(event)">
                 </div>
                 <div class="grid">
                     <div class="tile" onclick="createTab('https://www.roblox.com','Roblox')"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg"><span>Roblox</span></div>
@@ -86,30 +86,40 @@
             </div>
         </div>
     </div>
-    
-    <div id="rocket" class="rocket-fix" onclick="forceOpen()">Сайт блокується? Тисни 🚀</div>
+
+    <div id="block-notice" onclick="forceOpen()">
+        Сайт відмовився завантажуватись? <br>
+        <span style="font-size: 18px;">Тисни сюди для запуску! 🚀</span>
+    </div>
 
     <script>
-        let tabCounter = 0;
+        let tabCount = 0;
         let activeUrl = '';
 
-        function handleEnter(e) {
+        function handleSearch(e) {
             if (e.key === 'Enter') {
                 let v = e.target.value;
                 if (!v) return;
-                // Bing краще працює у фреймах ніж Google
-                let url = (v.includes('.') && !v.includes(' ')) ? (v.startsWith('http') ? v : 'https://' + v) : 'https://www.bing.com/search?q=' + encodeURIComponent(v);
+                
+                let url;
+                if (v.includes('.') && !v.includes(' ')) {
+                    url = v.startsWith('http') ? v : 'https://' + v;
+                } else {
+                    url = 'https://www.google.com/search?q=' + encodeURIComponent(v) + '&igu=1';
+                }
+                
                 createTab(url, 'Вкладка');
                 e.target.value = '';
             }
         }
 
         function createTab(url, title) {
-            tabCounter++;
-            const pId = 'p' + tabCounter;
-            const tId = 't' + tabCounter;
+            tabCount++;
+            const pId = 'p' + tabCount;
+            const tId = 't' + tabCount;
             activeUrl = url;
 
+            // Додаємо вкладку
             const tab = document.createElement('div');
             tab.className = 'tab';
             tab.id = tId;
@@ -117,6 +127,7 @@
             tab.onclick = () => showPage(pId, tId, url);
             document.getElementById('tabs').appendChild(tab);
 
+            // Додаємо вікно
             const page = document.createElement('div');
             page.className = 'view-frame';
             page.id = pId;
@@ -124,7 +135,10 @@
             document.getElementById('viewport').appendChild(page);
 
             showPage(pId, tId, url);
-            document.getElementById('rocket').style.display = 'block';
+
+            // Показуємо підказку про ракету
+            document.getElementById('block-notice').style.display = 'block';
+            setTimeout(() => { document.getElementById('block-notice').style.display = 'none'; }, 6000);
         }
 
         function showPage(pId, tId, url = '') {
@@ -132,11 +146,8 @@
             document.querySelectorAll('.view-frame').forEach(f => f.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             
-            const targetPage = document.getElementById(pId);
-            const targetTab = document.getElementById(tId);
-            
-            if(targetPage) targetPage.classList.add('active');
-            if(targetTab) targetTab.classList.add('active');
+            if(document.getElementById(pId)) document.getElementById(pId).classList.add('active');
+            if(document.getElementById(tId)) document.getElementById(tId).classList.add('active');
             
             document.getElementById('addr-bar').value = (pId === 'home-view') ? '' : url;
         }
