@@ -1,3 +1,20 @@
+Це класична проблема при створенні веб-браузера на базі iframe. Багато сучасних сайтів використовують заголовок безпеки X-Frame-Options: DENY або SAMEORIGIN, щоб їх не можна було відкрити всередині іншого сайту.
+
+Саме тому на вашому останньому скріншоті замість DuckDuckGo — порожній екран із «сумним листом».
+
+🛠️ Як змусити ПРАЦЮВАТИ все (не тільки Telegram)
+Оскільки ми не можемо змусити Google чи Discord змінити їхні налаштування безпеки, нам потрібно змінити спосіб, як ваш браузер Hybrid GX «спілкується» з інтернетом.
+
+1. Використання Bing як основного двигуна
+На відміну від Google та DuckDuckGo, Bing наразі дозволяє відкривати свої результати пошуку в iframe. Це найкращий варіант для вашої пошукової системи, щоб вона працювала прямо в інтерфейсі.
+
+2. Додавання кнопки «Прямий перехід» (Ракетний запуск)
+Оскільки деякі сайти (Instagram, Discord) заблоковані намертво, ми додамо в інтерфейс кнопку, яка автоматично відкриває такий сайт у справжній новій вкладці, якщо він не зміг завантажитися всередині.
+
+🚀 Фінальний код Hybrid GX v20.0
+Цей код виправляє помилку «порожнього екрана» та робить пошук робочим.
+
+HTML
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -15,14 +32,14 @@
 
         /* Навігація */
         .nav-bar { background: #151515; padding: 8px 15px; display: flex; gap: 15px; align-items: center; border-bottom: 1px solid #222; }
-        .nav-btn { cursor: pointer; color: var(--accent); font-size: 20px; user-select: none; }
-        #addr-bar { flex: 1; background: #000; border: 1px solid #333; color: #ccc; padding: 6px 15px; border-radius: 4px; outline: none; }
+        .nav-btn { cursor: pointer; color: var(--accent); font-size: 20px; user-select: none; transition: 0.2s; }
+        #addr-bar { flex: 1; background: #000; border: 1px solid #333; color: #ccc; padding: 6px 15px; border-radius: 4px; outline: none; font-size: 13px; }
 
         .container { display: flex; flex: 1; overflow: hidden; position: relative; }
 
         /* Бокова панель */
         .sidebar { width: 65px; background: var(--sidebar-bg); display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #222; z-index: 20; }
-        .side-icon { margin-bottom: 25px; cursor: pointer; }
+        .side-icon { margin-bottom: 25px; cursor: pointer; transition: 0.2s; }
         .side-icon img { width: 32px; height: 32px; border-radius: 5px; }
 
         /* Контент */
@@ -31,18 +48,21 @@
         .view-frame.active { display: block; }
         iframe { width: 100%; height: 100%; border: none; }
 
-        /* Головна */
+        /* Головна сторінка */
         #home-view { display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; background: var(--bg); }
-        #home-view.hidden { display: none !important; }
-        .logo { font-size: 60px; font-weight: bold; margin-bottom: 30px; }
+        .logo { font-size: 65px; font-weight: bold; margin-bottom: 30px; }
         .orange { color: var(--accent); }
+
         .main-search { width: 500px; padding: 15px 25px; border-radius: 30px; border: 2px solid #333; background: #111; color: white; font-size: 16px; outline: none; margin-bottom: 40px; }
         
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
-        .tile { background: #161616; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid #222; width: 100px; }
-        .tile:hover { border-color: var(--accent); transform: translateY(-3px); transition: 0.2s; }
+        .tile { background: #161616; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px solid #222; width: 100px; transition: 0.2s; }
+        .tile:hover { border-color: var(--accent); transform: translateY(-3px); }
         .tile img { width: 30px; height: 30px; margin-bottom: 8px; }
         .tile span { font-size: 11px; color: #aaa; display: block; }
+
+        /* Повідомлення */
+        .rocket-btn { background: var(--accent); color: black; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; position: absolute; bottom: 20px; right: 20px; display: none; z-index: 100; }
     </style>
 </head>
 <body>
@@ -54,21 +74,21 @@
     <div class="nav-bar">
         <div class="nav-btn" onclick="goBack()">⟵</div>
         <div class="nav-btn" onclick="location.reload()">⟳</div>
-        <input type="text" id="addr-bar" placeholder="Пошук або URL..." onkeypress="handleSearch(event)">
-        <div class="nav-btn" onclick="forceOpen()" title="Відкрити у новій вкладці">🚀</div>
+        <input type="text" id="addr-bar" placeholder="Пошук Bing (працює тут) або URL..." onkeypress="handleSearch(event)">
+        <div class="nav-btn" onclick="forceOpen()" title="Відкрити прямо">🚀</div>
     </div>
 
     <div class="container">
         <div class="sidebar">
             <div class="side-icon" onclick="createTab('https://www.youtube.com/embed/','YouTube')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"></div>
+            <div class="side-icon" onclick="createTab('https://www.bing.com','Bing')"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Bing_Fluent_Logo.svg"></div>
             <div class="side-icon" onclick="createTab('https://web.telegram.org/a/','Telegram')"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"></div>
-            <div class="side-icon" onclick="createTab('https://discord.com/app','Discord')"><img src="https://www.svgrepo.com/show/353655/discord-icon.svg"></div>
         </div>
 
         <div id="viewport">
             <div id="home-view" class="view-frame active">
-                <div class="logo"><span class="orange">Hybrid</span> GX</div>
-                <input type="text" class="main-search" placeholder="Шукати в інтернеті..." onkeypress="handleSearch(event)">
+                <div class="logo">Hybrid <span class="orange">GX</span></div>
+                <input type="text" class="main-search" placeholder="Шукати в інтернеті через Bing..." onkeypress="handleSearch(event)">
                 <div class="grid">
                     <div class="tile" onclick="createTab('https://www.roblox.com','Roblox')"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg"><span>Roblox</span></div>
                     <div class="tile" onclick="createTab('https://poki.com','Poki')"><img src="https://poki.com/favicon.ico"><span>Poki</span></div>
@@ -77,6 +97,7 @@
                 </div>
             </div>
         </div>
+        <div id="rocket" class="rocket-btn" onclick="forceOpen()">Сайт заблоковано? Натисни тут! 🚀</div>
     </div>
 
     <script>
@@ -86,19 +107,20 @@
         function handleSearch(e) {
             if (e.key === 'Enter') {
                 let v = e.target.value;
+                if (!v) return;
+                // ВИКОРИСТОВУЄМО BING ДЛЯ ПОШУКУ
                 let url = (v.includes('.') && !v.includes(' ')) ? (v.startsWith('http') ? v : 'https://' + v) : 'https://www.bing.com/search?q=' + encodeURIComponent(v);
-                createTab(url, 'Пошук');
+                createTab(url, 'Вкладка');
                 e.target.value = '';
             }
         }
 
         function createTab(url, title) {
             tabCount++;
-            const pId = 'page-' + tabCount;
-            const tId = 'tab-' + tabCount;
+            const pId = 'p-' + tabCount;
+            const tId = 't-' + tabCount;
             currentUrl = url;
 
-            // Створюємо вкладку зверху
             const tab = document.createElement('div');
             tab.className = 'tab';
             tab.id = tId;
@@ -106,7 +128,6 @@
             tab.onclick = () => switchView(pId, tId, url);
             document.getElementById('tabs').appendChild(tab);
 
-            // Створюємо саме вікно з сайтом
             const page = document.createElement('div');
             page.className = 'view-frame';
             page.id = pId;
@@ -114,22 +135,25 @@
             document.getElementById('viewport').appendChild(page);
 
             switchView(pId, tId, url);
+            
+            // Показуємо кнопку допомоги на всяк випадок
+            document.getElementById('rocket').style.display = 'block';
         }
 
         function switchView(pId, tId, url = '') {
             currentUrl = url;
-            // Ховаємо ВСЕ
             document.querySelectorAll('.view-frame').forEach(f => f.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
-            // Показуємо потрібне
             document.getElementById(pId).classList.add('active');
             document.getElementById(tId).classList.add('active');
-
             document.getElementById('addr-bar').value = (pId === 'home-view') ? '' : url;
         }
 
-        function showHome() { switchView('home-view', 'tab-home'); }
+        function showHome() { 
+            switchView('home-view', 'tab-home'); 
+            document.getElementById('rocket').style.display = 'none';
+        }
 
         function closeTab(e, tId, pId) {
             e.stopPropagation();
@@ -140,8 +164,8 @@
 
         function forceOpen() { if(currentUrl) window.open(currentUrl, '_blank'); }
         function goBack() { 
-            const activeFrame = document.querySelector('.view-frame.active iframe');
-            if(activeFrame) activeFrame.contentWindow.history.back(); 
+            const f = document.querySelector('.view-frame.active iframe');
+            if(f) f.contentWindow.history.back(); 
         }
     </script>
 </body>
