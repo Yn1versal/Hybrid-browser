@@ -1,152 +1,130 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hybrid Browser v7.0</title>
+    <title>Hybrid Browser v8.0</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #121212; color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background: #121212; color: white; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Вкладки */
-        .tabs-bar { background: #1a1a1a; display: flex; align-items: flex-end; padding: 8px 10px 0; gap: 5px; border-bottom: 1px solid #333; height: 45px; }
-        .tab { background: #2d2d2d; padding: 8px 15px; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 12px; min-width: 120px; display: flex; justify-content: space-between; align-items: center; color: #aaa; border: 1px solid #333; border-bottom: none; }
-        .tab.active { background: #FF8C00; color: black; font-weight: bold; border-color: #FF8C00; }
-        .close-btn { margin-left: 10px; font-size: 16px; cursor: pointer; }
+        /* Верх: Вкладки */
+        #tabs { background: #1a1a1a; display: flex; padding: 10px 10px 0; gap: 5px; border-bottom: 2px solid #FF8C00; }
+        .tab { background: #333; padding: 8px 15px; border-radius: 5px 5px 0 0; cursor: pointer; min-width: 120px; font-size: 13px; display: flex; justify-content: space-between; }
+        .tab.active { background: #FF8C00; color: black; font-weight: bold; }
 
         /* Навігація */
-        .nav-bar { background: #222; padding: 8px 15px; display: flex; align-items: center; gap: 15px; border-bottom: 2px solid #FF8C00; }
-        .nav-btn { cursor: pointer; font-size: 18px; color: #FF8C00; user-select: none; font-weight: bold; }
-        .address-input { flex: 1; background: #121212; border: 1px solid #444; padding: 6px 15px; border-radius: 20px; color: #ccc; outline: none; }
+        .nav { background: #222; padding: 10px; display: flex; gap: 10px; align-items: center; }
+        .btn { cursor: pointer; color: #FF8C00; font-weight: bold; font-size: 20px; user-select: none; }
+        input { flex: 1; background: #121212; border: 1px solid #444; color: white; padding: 8px 15px; border-radius: 20px; outline: none; }
 
-        /* Контентна частина */
-        .app-body { display: flex; flex: 1; overflow: hidden; }
+        /* Основна частина */
+        .container { display: flex; flex: 1; }
+        
+        /* Бокова панель */
+        .sidebar { width: 70px; background: #181818; display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #333; }
+        .side-btn { margin-bottom: 20px; cursor: pointer; position: relative; }
+        .side-btn img { width: 35px; height: 35px; border-radius: 8px; }
+        .dot { position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background: red; border-radius: 50%; border: 2px solid #181818; }
 
-        /* БОКОВА ПАНЕЛЬ (вона тепер точно нікуди не зникне) */
-        .sidebar { width: 70px; background: #181818; display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #333; z-index: 100; }
-        .side-btn { width: 45px; height: 45px; margin-bottom: 20px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; position: relative; }
-        .side-btn img { width: 32px; height: 32px; border-radius: 5px; }
-        .side-btn:hover { transform: scale(1.1); }
-        .dot { position: absolute; top: 0; right: 0; width: 12px; height: 12px; background: #ff1b2d; border-radius: 50%; border: 2px solid #181818; }
-
-        /* Вікна сайтів */
-        .view-container { flex: 1; position: relative; background: #121212; }
-        iframe { width: 100%; height: 100%; border: none; display: none; background: white; }
+        /* Веб-сайти */
+        #views { flex: 1; position: relative; background: #fff; }
+        iframe { width: 100%; height: 100%; border: none; display: none; }
         iframe.active { display: block; }
-
+        
         /* Головна сторінка */
-        .home-ui { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; transition: 0.3s; }
-        .home-ui.hidden { display: none; }
-        .logo { font-size: 64px; font-weight: bold; margin-bottom: 10px; }
+        #home { background: #121212; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        #home.hidden { display: none; }
+        .logo { font-size: 50px; font-weight: bold; margin-bottom: 20px; }
         .orange { color: #FF8C00; }
     </style>
 </head>
 <body>
 
-    <div class="tabs-bar" id="tabsBar">
-        <div class="tab active" id="tab-home" onclick="showTab('home-ui', 'tab-home')">
-            <span>🏠 Головна</span>
-        </div>
+    <div id="tabs">
+        <div class="tab active" id="t-home" onclick="show('home')">🏠 Головна</div>
     </div>
 
-    <div class="nav-bar">
-        <div class="nav-btn" onclick="navBack()">⟵</div>
-        <div class="nav-btn" onclick="navForward()">⟶</div>
-        <div class="nav-btn" onclick="navReload()">⟳</div>
-        <input type="text" class="address-input" id="urlInput" placeholder="Введіть запит у Google або URL-адресу..." onkeypress="handleInput(event)">
+    <div class="nav">
+        <div class="btn" onclick="back()">⟵</div>
+        <div class="btn" onclick="forward()">⟶</div>
+        <div class="btn" onclick="reload()">⟳</div>
+        <input type="text" id="url" placeholder="Введіть пошуковий запит або сайт..." onkeypress="checkKey(event)">
     </div>
 
-    <div class="app-body">
+    <div class="container">
         <div class="sidebar">
-            <div class="side-btn" onclick="newTab('https://web.telegram.org', 'Telegram')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="TG">
-            </div>
-            <div class="side-btn" onclick="newTab('https://discord.com/app', 'Discord')">
-                <img src="https://www.svgrepo.com/show/353655/discord-icon.svg" alt="DS">
-                <div class="dot"></div>
-            </div>
-            <div class="side-btn" onclick="newTab('https://www.youtube.com/embed', 'YouTube')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YT">
-            </div>
+            <div class="side-btn" onclick="go('https://web.telegram.org', 'TG')"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"></div>
+            <div class="side-btn" onclick="go('https://discord.com/app', 'Discord')"><img src="https://www.svgrepo.com/show/353655/discord-icon.svg"><div class="dot"></div></div>
+            <div class="side-btn" onclick="go('https://www.youtube.com/embed', 'YouTube')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"></div>
         </div>
 
-        <div class="view-container" id="viewContainer">
-            <div id="home-ui" class="home-ui">
-                <div class="logo"><span class="orange">Hybrid</span> browser</div>
-                <p style="color: #555;">v7.0 Stable Edition</p>
+        <div id="views">
+            <div id="home">
+                <div class="logo"><span class="orange">Hybrid</span> Browser</div>
+                <p style="color: #666;">Версія 8.0 працює</p>
             </div>
         </div>
     </div>
 
     <script>
-        let counter = 0;
-        let currentFrameId = null;
+        let count = 0;
+        let activeId = 'home';
 
-        function handleInput(e) {
+        function checkKey(e) {
             if (e.key === 'Enter') {
-                let val = e.target.value;
-                let url;
-                if (val.includes('.') && !val.includes(' ')) {
-                    url = val.startsWith('http') ? val : 'https://' + val;
-                } else {
-                    url = 'https://www.google.com/search?q=' + encodeURIComponent(val);
-                }
-                newTab(url, 'Пошук');
-                e.target.value = '';
+                let v = document.getElementById('url').value;
+                let link = v.includes('.') ? (v.startsWith('http') ? v : 'https://' + v) : 'https://www.google.com/search?q=' + v;
+                go(link, 'Вкладка');
             }
         }
 
-        function newTab(url, title) {
-            counter++;
-            const tId = 't-' + counter;
-            const fId = 'f-' + counter;
-
+        function go(url, title) {
+            count++;
+            let id = 'f' + count;
+            
             // Створюємо вкладку
-            const tab = document.createElement('div');
-            tab.className = 'tab';
-            tab.id = tId;
-            tab.innerHTML = `<span>${title}</span> <span class="close-btn" onclick="removeTab(event, '${tId}', '${fId}')">×</span>`;
-            tab.onclick = () => showTab(fId, tId);
+            let t = document.createElement('div');
+            t.className = 'tab';
+            t.id = 'tab-' + id;
+            t.innerHTML = `<span>${title}</span> <span onclick="closeT(event, '${id}')"> ×</span>`;
+            t.onclick = () => show(id);
+            document.getElementById('tabs').appendChild(t);
 
             // Створюємо фрейм
-            const ifr = document.createElement('iframe');
-            ifr.id = fId;
+            let ifr = document.createElement('iframe');
+            ifr.id = id;
             ifr.src = url;
+            document.getElementById('views').appendChild(ifr);
 
-            document.getElementById('tabsBar').appendChild(tab);
-            document.getElementById('viewContainer').appendChild(ifr);
-
-            showTab(fId, tId);
+            show(id);
         }
 
-        function showTab(fId, tId) {
-            currentFrameId = (fId === 'home-ui') ? null : fId;
-
-            // Ховаємо все
+        function show(id) {
+            activeId = id;
             document.querySelectorAll('iframe').forEach(i => i.classList.remove('active'));
-            document.getElementById('home-ui').classList.add('hidden');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('home').classList.add('hidden');
 
-            // Показуємо потрібне
-            if (fId === 'home-ui') {
-                document.getElementById('home-ui').classList.remove('hidden');
+            if (id === 'home') {
+                document.getElementById('home').classList.remove('hidden');
+                document.getElementById('t-home').classList.add('active');
             } else {
-                document.getElementById(fId).classList.add('active');
-                document.getElementById('urlInput').value = document.getElementById(fId).src;
+                document.getElementById(id).classList.add('active');
+                document.getElementById('tab-' + id).classList.add('active');
+                document.getElementById('url').value = document.getElementById(id).src;
             }
-            document.getElementById(tId).classList.add('active');
         }
 
-        function removeTab(e, tId, fId) {
+        function closeT(e, id) {
             e.stopPropagation();
-            document.getElementById(tId).remove();
-            document.getElementById(fId).remove();
-            showTab('home-ui', 'tab-home');
+            document.getElementById(id).remove();
+            document.getElementById('tab-' + id).remove();
+            show('home');
         }
 
-        function navBack() { if(currentFrameId) document.getElementById(currentFrameId).contentWindow.history.back(); }
-        function navForward() { if(currentFrameId) document.getElementById(currentFrameId).contentWindow.history.forward(); }
-        function navReload() { if(currentFrameId) { let f = document.getElementById(currentFrameId); f.src = f.src; } }
+        function back() { if(activeId !== 'home') document.getElementById(activeId).contentWindow.history.back(); }
+        function forward() { if(activeId !== 'home') document.getElementById(activeId).contentWindow.history.forward(); }
+        function reload() { if(activeId !== 'home') { let f = document.getElementById(activeId); f.src = f.src; } }
     </script>
 </body>
 </html>
